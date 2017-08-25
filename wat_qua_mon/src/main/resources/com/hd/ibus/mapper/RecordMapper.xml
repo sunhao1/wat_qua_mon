@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.ibus.mapper.RecordMapper" >
+  <resultMap id="BaseResultMap" type="com.hd.ibus.pojo.Record" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="record_time" property="recordTime" jdbcType="TIMESTAMP" />
+    <result column="station_id" property="stationId" jdbcType="INTEGER" />
+    <result column="equipment_id" property="equipmentId" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, content, user_id, record_time, station_id, equipment_id
+  </sql>
+
+  <!--分页查询列表-->
+  <select id="select" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from record
+    <if test="object!=null">
+      WHERE content LIKE concat(concat('%',#{object.content}),'%')
+    </if>
+
+    <if test="pageBean!=null">
+      limit ${pageBean.start},${pageBean.pageSize}
+    </if>
+  </select>
+
+  <!-- 查询列表的总记录数 -->
+  <select id="findTotal" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from record
+    <if test="object!=null">
+      WHERE content LIKE concat(concat('%',#{object.content}),'%')
+    </if>
+  </select>
+
+  <select id="paramCount" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from record
+    <if test="object!=null">
+      WHERE content =#{object.content}
+    </if>
+  </select>
+
+  <select id="selectByKey" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from record
+    <if test="object!=null">
+      WHERE id = #{object.id}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="com.hd.ibus.pojo.User">
+      insert into record (id, content, user_id,
+      record_time, station_id, equipment_id
+      )
+      values (#{id,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER},
+      #{recordTime,jdbcType=TIMESTAMP}, #{stationId,jdbcType=INTEGER}, #{equipmentId,jdbcType=INTEGER}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.hd.ibus.pojo.User">
+    update record
+    <set >
+      <if test="content != null" >
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stationId != null" >
+        station_id = #{stationId,jdbcType=INTEGER},
+      </if>
+      <if test="equipmentId != null" >
+        equipment_id = #{equipmentId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+</mapper>

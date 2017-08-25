@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.ibus.mapper.MonitorDataMapper" >
+
+  <resultMap id="BaseResultMap" type="com.hd.ibus.pojo.MonitorData" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="equipment_id" property="equipmentId" jdbcType="INTEGER" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="data" property="data" jdbcType="DECIMAL" />
+    <result column="monitor_time" property="monitorTime" jdbcType="TIMESTAMP" />
+    <result column="record_time" property="recordTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, equipment_id, number, data, monitor_time, record_time
+  </sql>
+
+  <!--分页查询列表-->
+  <select id="select" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from monitor_data
+    <if test="object!=null">
+      WHERE number LIKE concat(concat('%',#{object.number}),'%')
+    </if>
+
+    <if test="pageBean!=null">
+      limit ${pageBean.start},${pageBean.pageSize}
+    </if>
+  </select>
+
+  <!-- 查询列表的总记录数 -->
+  <select id="findTotal" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from monitor_data
+    <if test="object!=null">
+      WHERE number LIKE concat(concat('%',#{object.number}),'%')
+    </if>
+  </select>
+
+  <select id="paramCount" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from monitor_data
+    <if test="object!=null">
+      WHERE number =#{object.number}
+    </if>
+  </select>
+
+  <select id="selectByKey" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from monitor_data
+    <if test="object!=null">
+      WHERE id = #{object.id}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="com.hd.ibus.pojo.MonitorData">
+     insert into monitor_data (id, equipment_id, number,
+      data, monitor_time, record_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{equipmentId,jdbcType=INTEGER}, #{number,jdbcType=VARCHAR},
+      #{data,jdbcType=DECIMAL}, #{monitorTime,jdbcType=TIMESTAMP}, #{recordTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.hd.ibus.pojo.MonitorData">
+    update monitor_data
+    <set >
+      <if test="equipmentId != null" >
+        equipment_id = #{equipmentId,jdbcType=INTEGER},
+      </if>
+      <if test="number != null" >
+        number = #{number,jdbcType=VARCHAR},
+      </if>
+      <if test="data != null" >
+        data = #{data,jdbcType=DECIMAL},
+      </if>
+      <if test="monitorTime != null" >
+        monitor_time = #{monitorTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="recordTime != null" >
+        record_time = #{recordTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from monitor_data
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+</mapper>

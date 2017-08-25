@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.ibus.mapper.NewsMapper" >
+  <resultMap id="BaseResultMap" type="com.hd.ibus.pojo.News" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="title" property="title" jdbcType="VARCHAR" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="send_user_id" property="sendUserId" jdbcType="INTEGER" />
+    <result column="send_time" property="sendTime" jdbcType="TIMESTAMP" />
+    <result column="receive_user_ids" property="receiveUserIds" jdbcType="VARCHAR" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, title, content, send_user_id, send_time, receive_user_ids
+  </sql>
+
+  <!--分页查询列表-->
+  <select id="select" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from news
+    <if test="object!=null">
+      WHERE title LIKE concat(concat('%',#{object.title}),'%')
+    </if>
+
+    <if test="pageBean!=null">
+      limit ${pageBean.start},${pageBean.pageSize}
+    </if>
+  </select>
+
+  <!-- 查询列表的总记录数 -->
+  <select id="findTotal" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from news
+    <if test="object!=null">
+      WHERE title LIKE concat(concat('%',#{object.title}),'%')
+    </if>
+  </select>
+
+  <select id="paramCount" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from news
+    <if test="object!=null">
+      WHERE title =#{object.title}
+    </if>
+  </select>
+
+  <select id="selectByKey" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from news
+    <if test="object!=null">
+      WHERE id = #{object.id}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="com.hd.ibus.pojo.User">
+    insert into news (id, title, content,
+      send_user_id, send_time, receive_user_ids
+      )
+    values (#{id,jdbcType=INTEGER}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR},
+      #{sendUserId,jdbcType=INTEGER}, #{sendTime,jdbcType=TIMESTAMP}, #{receiveUserIds,jdbcType=VARCHAR}
+      )
+  </insert>
+
+</mapper>

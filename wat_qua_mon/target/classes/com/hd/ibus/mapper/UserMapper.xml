@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.hd.ibus.mapper.UserMapper">
+
+  <resultMap id="BaseResultMap" type="com.hd.ibus.pojo.User">
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="account" property="account" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="tel" property="tel" jdbcType="VARCHAR" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="unit_id" property="unitId" jdbcType="INTEGER" />
+    <result column="role_id" property="roleId" jdbcType="INTEGER" />
+    <result column="power" property="power" jdbcType="VARCHAR" />
+    <result column="state" property="state" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, account, password, name, tel, email, unit_id, role_id, power, state
+  </sql>
+
+  <!--分页查询列表-->
+  <select id="select" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from user
+    <if test="object!=null">
+      WHERE account LIKE concat(concat('%',#{object.account}),'%')
+    </if>
+
+    <if test="pageBean!=null">
+      limit ${pageBean.start},${pageBean.pageSize}
+    </if>
+  </select>
+
+  <!-- 查询列表的总记录数 -->
+  <select id="findTotal" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from user
+    <if test="object!=null">
+      WHERE account LIKE concat(concat('%',#{object.account}),'%')
+    </if>
+  </select>
+
+  <select id="paramCount" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from user
+    <if test="object!=null">
+      WHERE account =#{object.account}
+    </if>
+  </select>
+
+  <select id="selectByKey" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from user
+    <if test="object!=null">
+      WHERE id = #{object.id}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="com.hd.ibus.pojo.User">
+    insert into user (id, account, password,
+    name, tel, email, unit_id,
+    role_id, power, state
+    )
+    values (#{id,jdbcType=INTEGER}, #{account,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+    #{name,jdbcType=VARCHAR}, #{tel,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{unitId,jdbcType=INTEGER},
+    #{roleId,jdbcType=INTEGER}, #{power,jdbcType=VARCHAR}, #{state,jdbcType=INTEGER}
+    )
+  </insert>
+
+  <update id="update" parameterType="com.hd.ibus.pojo.User">
+    update user
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null">
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="tel != null">
+        tel = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="unitId != null">
+        unit_id = #{unitId,jdbcType=INTEGER},
+      </if>
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="power != null">
+        power = #{power,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null" >
+        state = #{power,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+
+  <select id="login" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from user
+    <if test="object!=null">
+      WHERE account = #{object.account} AND password = #{object.password}
+    </if>
+  </select>
+</mapper>

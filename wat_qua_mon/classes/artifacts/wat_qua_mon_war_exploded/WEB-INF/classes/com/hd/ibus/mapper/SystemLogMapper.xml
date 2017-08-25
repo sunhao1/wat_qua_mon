@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hd.ibus.mapper.SystemLogMapper" >
+  <resultMap id="BaseResultMap" type="com.hd.ibus.pojo.SystemLog" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="content" property="content" jdbcType="VARCHAR" />
+    <result column="opration_time" property="oprationTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+
+  <sql id="Base_Column_List" >
+    id, type, content, opration_time, user_id
+  </sql>
+
+  <select id="select" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from system_log
+    <if test="object!=null">
+      WHERE content LIKE concat(concat('%',#{object.content}),'%')
+    </if>
+
+    <if test="pageBean!=null">
+      limit ${pageBean.start},${pageBean.pageSize}
+    </if>
+  </select>
+
+  <insert id="insert" parameterType="com.hd.ibus.pojo.SystemLog" >
+    insert into system_log (id, type, content, 
+      opration_time, user_id)
+    values (#{id,jdbcType=INTEGER}, #{type,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, 
+      #{oprationTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=INTEGER})
+  </insert>
+
+  <!-- 查询列表的总记录数 -->
+  <select id="findTotal" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from system_log
+    <if test="object!=null">
+      WHERE content LIKE concat(concat('%',#{object.content}),'%')
+    </if>
+  </select>
+
+  <select id="paramCount" parameterType="com.hd.ibus.util.shenw.PageHelp"
+          resultType="int">
+    select count(*) from system_log
+    <if test="object!=null">
+      WHERE id =#{object.id}
+    </if>
+  </select>
+
+  <select id="selectByKey" parameterType="com.hd.ibus.util.shenw.PageHelp" resultMap="BaseResultMap">
+    SELECT
+    <include refid="Base_Column_List" />
+    from system_log
+    <if test="object!=null">
+      WHERE id = #{object.id}
+    </if>
+  </select>
+
+</mapper>
